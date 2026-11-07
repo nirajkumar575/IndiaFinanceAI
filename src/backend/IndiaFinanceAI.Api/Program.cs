@@ -8,6 +8,7 @@ using IndiaFinanceAI.Infrastructure.Persistence;
 using IndiaFinanceAI.Infrastructure.WhatsApp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -86,6 +87,15 @@ builder.Services.AddHttpClient<IWhatsAppService, WhatsAppService>(client => clie
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
+builder.Services.Configure<HstsOptions>(options => options.MaxAge = TimeSpan.FromDays(365));
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.Configure<HttpsRedirectionOptions>(options =>
+    {
+        options.HttpsPort = builder.Configuration.GetValue<int?>("HttpsRedirection:HttpsPort") ?? 443;
+        options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+    });
+}
 if (allowedOrigins.Length > 0)
 {
     builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
@@ -156,7 +166,7 @@ app.UseForwardedHeaders();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler();
-    app.UseHsts(options => options.MaxAge = TimeSpan.FromDays(365));
+    app.UseHsts();
 }
 
 if (app.Environment.IsDevelopment())
