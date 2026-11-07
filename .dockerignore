@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+.env.*
+**/*.secrets.json
+**/*.pfx
+**/*.key
+**/bin
+**/obj
+src/frontend/node_modules
+src/frontend/.angular
+src/frontend/dist
+src/backend/IndiaFinanceAI.Api/appsettings.Development.json

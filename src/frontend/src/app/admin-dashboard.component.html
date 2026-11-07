@@ -1,0 +1,107 @@
+<div class="admin-backdrop" role="presentation">
+  <section class="admin-shell" role="dialog" aria-modal="true" aria-label="Admin lead dashboard">
+    <header class="admin-header">
+      <div><p class="admin-kicker">INDIAFINANCE AI / OPERATIONS</p><h1>Lead management</h1></div>
+      <div class="header-actions">
+        @if (accessToken) { <button type="button" class="quiet-button" (click)="logout()">Sign out</button> }
+        <button type="button" class="close-button" (click)="close.emit()" aria-label="Close admin dashboard">&#215;</button>
+      </div>
+    </header>
+
+    @if (!accessToken) {
+      <div class="login-wrap">
+        <div class="login-copy"><p class="admin-kicker">RESTRICTED ACCESS</p><h2>Admin sign in</h2><p>Lead details are available to authorized administrators only.</p></div>
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+          <label>Username<input type="text" formControlName="username" autocomplete="username" /></label>
+          <label>Password<input type="password" formControlName="password" autocomplete="current-password" /></label>
+          @if (errorMessage) { <p class="form-error" role="alert">{{ errorMessage }}</p> }
+          <button type="submit" class="primary-button" [disabled]="isLoading">{{ isLoading ? 'Signing in…' : 'Sign in' }}</button>
+        </form>
+      </div>
+    } @else {
+      <div class="dashboard-body">
+        <section class="lead-list" aria-label="Customer leads">
+          <div class="dashboard-toolbar">
+            <div class="filters">
+              <label>Loan type<select [value]="loanTypeFilter" (change)="loanTypeFilter = $any($event.target).value; loadLeads()"><option value="">All loan types</option>@for (loanType of loanTypes; track loanType) { <option [value]="loanType">{{ loanType }}</option> }</select></label>
+              <label>Status<select [value]="statusFilter" (change)="statusFilter = $any($event.target).value; loadLeads()"><option value="">All statuses</option>@for (status of statuses; track status) { <option [value]="status">{{ status }}</option> }</select></label>
+              <label class="search-label">Search<input type="search" [value]="searchText" (input)="searchText = $any($event.target).value" (keyup.enter)="loadLeads()" placeholder="Lead ID or customer name" /></label>
+              <button type="button" class="filter-button" (click)="loadLeads()">Search</button>
+            </div>
+            <p class="result-count" aria-live="polite">{{ infoMessage }}</p>
+          </div>
+          @if (errorMessage) { <p class="form-error" role="alert">{{ errorMessage }}</p> }
+          @if (isLoading) { <p class="loading-message" role="status">Loading leads…</p> }
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Customer / ID</th><th>Loan</th><th>Priority</th><th>Status</th><th>Follow-up</th></tr></thead>
+              <tbody>
+                @for (lead of leads; track lead.id) {
+                  <tr [class.selected]="selectedLead?.id === lead.id">
+                    <td><button type="button" class="customer-cell" (click)="openLead(lead.id)"><strong>{{ lead.fullName }}</strong><small>{{ lead.id }}</small></button></td>
+                    <td><span>{{ lead.loanType }}</span><small>{{ lead.city }}, {{ lead.state }}</small></td>
+                    <td><span class="priority" [class.high]="lead.priority === 'High'" [class.medium]="lead.priority === 'Medium'" [class.low]="lead.priority === 'Low'">{{ lead.priority }} · {{ lead.score }}</span></td>
+                    <td>{{ lead.leadStatus }}</td>
+                    <td>{{ lead.followUpDate || '—' }}</td>
+                  </tr>
+                } @empty {
+                  @if (!isLoading) { <tr><td class="empty-state" colspan="5">No leads match these filters.</td></tr> }
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        @if (selectedLead; as lead) {
+          <aside class="lead-detail" aria-label="Lead details">
+            <div class="detail-heading"><div><p class="admin-kicker">LEAD DETAIL</p><h2>{{ lead.fullName }}</h2></div><button type="button" class="quiet-button" (click)="selectedLead = null">Close detail</button></div>
+            <p class="lead-id">{{ lead.id }}</p>
+            <div class="detail-priority"><span class="priority" [class.high]="lead.priority === 'High'" [class.medium]="lead.priority === 'Medium'" [class.low]="lead.priority === 'Low'">{{ lead.priority }} priority · {{ lead.score }}/100</span></div>
+            <p class="ai-summary"><strong>AI-assisted summary</strong>{{ lead.aiSummary }}</p>
+            <dl class="detail-grid">
+              <div><dt>Loan type</dt><dd>{{ lead.loanType }}</dd></div><div><dt>Amount</dt><dd>₹{{ lead.requiredLoanAmount | number }}</dd></div>
+              <div><dt>Monthly income</dt><dd>₹{{ lead.monthlyIncome | number }}</dd></div><div><dt>Employment</dt><dd>{{ lead.employmentType }}</dd></div>
+              <div><dt>City / state</dt><dd>{{ lead.city }}, {{ lead.state }}</dd></div><div><dt>Lead source</dt><dd>{{ lead.leadSource }}</dd></div>
+              <div><dt>Mobile</dt><dd>{{ lead.mobileNumber }}</dd></div><div><dt>Email</dt><dd>{{ lead.email || 'Not provided' }}</dd></div>
+              <div><dt>Callback requested</dt><dd>{{ lead.callbackRequested ? 'Yes' : 'No' }}</dd></div><div><dt>Preferred time</dt><dd>{{ lead.preferredContactTime || 'Not selected' }}</dd></div>
+              <div><dt>Contact consent</dt><dd>{{ lead.consentGiven ? 'Given' : 'Not given' }}</dd></div><div><dt>Enquiry date</dt><dd>{{ lead.createdAt | date: 'medium' }}</dd></div>
+              <div><dt>WhatsApp consent</dt><dd>{{ lead.whatsAppConsentGiven ? ('Given ' + (lead.whatsAppConsentAt | date: 'short')) : 'Not given' }}</dd></div>
+              <div><dt>WhatsApp opt-out</dt><dd>{{ lead.whatsAppOptedOutAt ? ('Opted out ' + (lead.whatsAppOptedOutAt | date: 'short')) : 'Not opted out' }}</dd></div>
+              <div><dt>Last WhatsApp activity</dt><dd>{{ lead.lastWhatsAppActivityAt ? (lead.lastWhatsAppActivityAt | date: 'short') : 'Never' }}</dd></div>
+              <div><dt>Communication status</dt><dd>{{ lead.lastWhatsAppStatus || 'No activity' }}</dd></div>
+            </dl>
+            <details class="score-explanation"><summary>Scoring breakdown</summary><ul>@for (signal of lead.scoreSignals; track signal.name) { <li><span>{{ signal.name }}</span><strong>{{ signal.applied ? '+' + signal.points : '0' }}</strong></li> }</ul></details>
+            <form class="management-form" [formGroup]="managementForm" (ngSubmit)="saveManagement()">
+              <h3>Follow-up management</h3>
+              <label>Status<select formControlName="leadStatus">@for (status of statuses; track status) { <option [value]="status">{{ status }}</option> }</select></label>
+              <label>Follow-up date<input type="date" formControlName="followUpDate" /></label>
+              <label>Notes<textarea formControlName="followUpNotes" maxlength="2000" rows="3" placeholder="Internal follow-up notes"></textarea></label>
+              <button type="submit" class="primary-button" [disabled]="isSaving">{{ isSaving ? 'Saving…' : 'Save updates' }}</button>
+            </form>
+            <section class="whatsapp-management" aria-label="WhatsApp contact">
+              <h3>WhatsApp contact</h3>
+              @if (!lead.whatsAppConsentGiven) { <p class="whatsapp-notice">No separate WhatsApp consent recorded. Contact actions are disabled.</p> }
+              @if (lead.whatsAppOptedOutAt) { <p class="whatsapp-notice">Customer opted out. WhatsApp contact is blocked.</p> }
+              <button type="button" class="primary-button" (click)="prepareWhatsAppLink()" [disabled]="!canContactOnWhatsApp() || isWhatsAppBusy">{{ isWhatsAppBusy ? 'Preparing…' : 'Prepare manual chat link' }}</button>
+              @if (manualChatLink) { <a class="open-whatsapp-link" [href]="manualChatLink" target="_blank" rel="noopener noreferrer">Review and open WhatsApp</a> }
+              @if (whatsAppFeedback) { <p class="whatsapp-feedback" [class.error]="whatsAppFeedbackKind === 'error'" role="status">{{ whatsAppFeedback }}</p> }
+              @if (whatsAppStatus.cloudApiEnabled) {
+                <div class="cloud-template-control">
+                  <label>Approved template<select [value]="selectedTemplate" (change)="selectedTemplate = $any($event.target).value">@for (template of whatsAppStatus.approvedTemplates; track template) { <option [value]="template">{{ template }}</option> }</select></label>
+                  <button type="button" class="quiet-button" (click)="sendApprovedTemplate()" [disabled]="!canContactOnWhatsApp() || !selectedTemplate || isWhatsAppBusy">Send approved template</button>
+                </div>
+              } @else {
+                <p class="whatsapp-notice">Cloud API disabled. Manual links do not send messages automatically.</p>
+              }
+              @if (lead.whatsAppConsentGiven && !lead.whatsAppOptedOutAt) { <button type="button" class="opt-out-button" (click)="recordWhatsAppOptOut()" [disabled]="isWhatsAppBusy">Record WhatsApp opt-out</button> }
+              <div class="whatsapp-events"><h4>Recent communication events</h4>
+                @for (event of whatsAppEvents; track event.id) { <p><span>{{ event.eventType }} · {{ event.status }}</span><time>{{ event.createdAt | date: 'short' }}</time>@if (event.errorCode) { <small>{{ event.errorCode }}</small> }</p> }
+                @if (whatsAppEvents.length === 0) { <p class="whatsapp-notice">No WhatsApp events recorded.</p> }
+              </div>
+            </section>
+          </aside>
+        }
+      </div>
+    }
+  </section>
+</div>

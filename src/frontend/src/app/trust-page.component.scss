@@ -1,0 +1,22 @@
+:host { --trust-ink: #1d2b24; --trust-muted: #64736a; --trust-line: #dce5dd; --trust-forest: #174b37; --trust-coral: #c65e48; color: var(--trust-ink); display: block; font-family: "Trebuchet MS", "Segoe UI", sans-serif; min-height: 100dvh; }
+.trust-page { background: linear-gradient(135deg, #f7f8f3 0%, #fff 58%, #edf3ee 100%); min-height: 100dvh; }
+.trust-header { align-items: center; border-bottom: 1px solid var(--trust-line); display: flex; justify-content: space-between; padding: 18px max(24px, calc((100% - 1120px) / 2)); }
+.trust-brand { align-items: center; color: var(--trust-ink); display: inline-flex; font-size: 15px; gap: 10px; text-decoration: none; }
+.trust-brand strong { color: var(--trust-coral); }
+.brand-mark { align-items: center; background: var(--trust-forest); border-radius: 50%; color: #fff; display: inline-flex; font-family: Georgia, serif; font-size: 12px; height: 32px; justify-content: center; width: 32px; }
+.home-link { color: var(--trust-forest); font-size: 12px; text-decoration: none; }
+.trust-content { margin: 0 auto; max-width: 800px; padding: 72px 24px 84px; }
+.trust-eyebrow { color: var(--trust-forest); font-size: 10px; font-weight: 700; letter-spacing: 1px; margin: 0 0 12px; text-transform: uppercase; }
+.trust-content h1, .trust-section h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: 0; }
+.trust-content h1 { font-size: 48px; line-height: 1.12; margin: 0; }
+.trust-intro { color: var(--trust-muted); font-family: Georgia, serif; font-size: 18px; line-height: 1.6; margin: 22px 0 48px; }
+.trust-section { border-top: 1px solid var(--trust-line); padding: 24px 0; }
+.trust-section h2 { font-size: 22px; margin: 0 0 12px; }
+.trust-section p, .trust-section li { color: #46564c; font-size: 14px; line-height: 1.75; }
+.trust-section p { margin: 8px 0; }
+.trust-section ul { padding-left: 20px; }
+.trust-section li { margin: 5px 0; }
+.trust-links { border-top: 1px solid var(--trust-line); display: flex; flex-wrap: wrap; gap: 18px; padding-top: 22px; }
+.trust-links a { color: var(--trust-forest); font-size: 11px; text-underline-offset: 3px; }
+.trust-updated { color: var(--trust-muted); font-size: 10px; margin: 24px 0 0; }
+@media (max-width: 600px) { .trust-content { padding: 48px 22px 60px; } .trust-content h1 { font-size: 36px; } .trust-intro { font-size: 16px; margin-bottom: 34px; } .trust-section h2 { font-size: 20px; } .trust-section p, .trust-section li { font-size: 13px; } .trust-header { padding-inline: 20px; } }

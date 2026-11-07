@@ -1,0 +1,22 @@
+<main class="trust-page">
+  <header class="trust-header">
+    <a class="trust-brand" routerLink="/" aria-label="IndiaFinance AI home"><span class="brand-mark">IF</span><span>IndiaFinance <strong>AI</strong></span></a>
+    <a class="home-link" routerLink="/">Back to home <span aria-hidden="true">&#8594;</span></a>
+  </header>
+  <article class="trust-content">
+    <p class="trust-eyebrow">{{ page.eyebrow }}</p>
+    <h1>{{ page.title }}</h1>
+    <p class="trust-intro">{{ page.intro }}</p>
+    @for (section of page.sections; track section.title) {
+      <section class="trust-section">
+        <h2>{{ section.title }}</h2>
+        @for (paragraph of section.paragraphs; track paragraph) { <p>{{ paragraph }}</p> }
+        @if (section.bullets?.length) { <ul>@for (bullet of section.bullets; track bullet) { <li>{{ bullet }}</li> }</ul> }
+      </section>
+    }
+    <nav class="trust-links" aria-label="Legal and company pages">
+      <a routerLink="/privacy">Privacy</a><a routerLink="/terms">Terms</a><a routerLink="/disclaimer">Loan disclaimer</a><a routerLink="/contact">Contact</a><a routerLink="/about">About</a>
+    </nav>
+    <p class="trust-updated">Last reviewed: 7 November 2026</p>
+  </article>
+</main>

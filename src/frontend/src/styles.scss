@@ -1,0 +1,5 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+body { background: #fff; color: #1d2b24; margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #c65e48; outline-offset: 3px; }

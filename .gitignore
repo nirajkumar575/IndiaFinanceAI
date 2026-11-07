@@ -1,0 +1,22 @@
+# .NET build outputs
+**/bin/
+**/obj/
+
+# Angular and package manager outputs
+**/node_modules/
+**/.angular/
+**/dist/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+**/*.secrets.json
+**/*.pfx
+**/*.key
+
+# IDE and local tooling
+.vs/
+.vscode/*.user
+*.user
+*.suo
